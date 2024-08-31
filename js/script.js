@@ -56,7 +56,7 @@ parent1.addEventListener('click', function(e){
 //  տեքսը գա իր սկզբնական դիրքին եթե ինպուտի մեջ ոչինչ չի լրացվել։ Ունենալ առնվազն 5 ինպուտ։
 
 
-let input = document.querySelectorAll('input')
+let input = document.querySelectorAll('.input')
 let span = document.querySelectorAll('span')
 
 function addAndRemove(e){
@@ -90,3 +90,157 @@ document.querySelector('.digital-clock').textContent = `${hours} : ${minutes} : 
 
 setInterval(updateClock, 1000)
 updateClock()
+
+//  ------------------------------------------------------------------------------------------ 
+
+// Ստեղծել Գրանցման դաշտ, HTML  Form, Որտեղ մարդկանց տվյալներ են լրացվում։
+//  -> Անուն
+//  ->Ազգանուն
+//  ->ծն ամ/ամս
+//  ->դաս || ուսան
+//  ->Աշխ. փորձ ժամկ(եթե դասախոս)
+//  ->Ֆակուլտետ խումբ (եթե ուսանող)
+//  ->Վերականգման և գաղտնիության կոդ (ուսանողի համար 7 անիշ թիվ ու մի թիվը չկրկնվի 2 ից ավել, դաս համար 9 սիմվոլ որից առնվազն 3 ը տառեր են և չկրկնվող, թվերը նույնպես չկրկնվեն 2 ից ավել)
+//  Այս ամբողջ ինֆոն գրել լրացնելուց հետո պահպանվի լոկալ սթորիջում իր id ով։
+//  (Id ն տրվում է ավտոմատ այնպիսի ալգորիթմով որ երբևէ չկրկնվի։
+//  Պրոցեսը տեղի ունենա ամեն անգամ լրացնել հաստատման կոճակին սեղմելուց հետո։
+//  Օգտագործել ռեգուլար էքսպրեսիոն վալիդացման համար։ Տեղեկացնել օգտատիրոջը այն սխալ լրացրած դաշտի մասին, որը լրացվել է սխալ։
+
+
+const form = document.querySelector("#form")
+const userNameInput = document.querySelector('#name')
+const surnameInput = document.querySelector('#surname')
+const teacherRadio = document.querySelector('#Teacher')
+const studentRadio = document.querySelector('#Student')
+const workExperienceInput = document.querySelector('#WorkExperienceTime')
+const facultyGroupInput = document.querySelector('#FacultyGroup')
+const inputControlRadio = document.querySelector('.input-control-radio')
+const errorRadio = inputControlRadio.querySelector('.error')
+const passwordInput = document.querySelector('#password')
+const dateOfBirthInput = document.querySelector('#Date-of-Birth')
+const submitButton = document.querySelector('button')
+let validationCount = 0
+const users = JSON.parse(localStorage.getItem("users")) || []
+
+
+
+form.addEventListener("submit", (e) => {
+    e.preventDefault()
+    validationCount = 0
+    validateInputs()
+
+    if (validationCount === 5) {
+        const newUser = {
+            id: new Date().getTime().toString(),
+            name: userNameInput.value.trim(),
+            surname: surnameInput.value.trim(),
+            dateOfBirth: dateOfBirthInput.value.trim(),
+            profession: teacherRadio.checked ? 'Teacher' : 'Student',
+            workExperience: workExperienceInput.value.trim(),
+            facultyGroup: facultyGroupInput.value.trim(),
+            password: passwordInput.value.trim(),
+        }
+
+        users.push(newUser)
+        localStorage.setItem("users", JSON.stringify(users))
+        form.reset()
+    }
+})
+
+
+function setError(element, message) {
+    const inputControl = element.parentElement;
+    const errorDisplay = inputControl.querySelector('.error')
+
+    errorDisplay.textContent = message
+    inputControl.classList.add('error')
+    inputControl.classList.remove('success')
+}
+
+function setSuccess(element) {
+    const inputControl = element.parentElement
+    const errorDisplay = inputControl.querySelector('.error')
+
+    errorDisplay.textContent = ''
+    inputControl.classList.add('success')
+    inputControl.classList.remove('error')
+}
+
+function isValidPasswordForTeacher(password) {
+    const teacherPasswordPattern = /^(?!.*(\d).*\1.*\1)\d{7,}$/
+    return teacherPasswordPattern.test(password)
+}
+
+function isValidPasswordForStudent(password) {
+    const studentPasswordPattern = /^(?=.*[a-zA-Z]{3}).{9,}$/
+    return studentPasswordPattern.test(password)
+}
+
+function validateInputs() {
+
+    validateField(userNameInput, 'Name is required')
+    validateField(surnameInput, 'Surname is required')
+    validateField(dateOfBirthInput, 'Date of Birth is required')
+
+    if (!teacherRadio.checked) {
+        errorRadio.textContent = 'Please select either Teacher or Student'
+    } else {
+        errorRadio.textContent = ''
+        const radioInputError = document.querySelector('.radioError')
+
+        if(workExperienceInput.value.trim() === ''){
+            workExperienceInput.style.border = '2px solid #ff3860'
+            radioInputError.textContent = 'work experience, time is required'
+        }else {
+            workExperienceInput.style.border = '2px solid #09c372'
+            radioInputError.textContent = ''
+            validationCount++
+        }
+    }
+
+    if(!studentRadio.checked){
+        errorRadio.textContent = 'Please select either Teacher or Student'
+    }else {
+        errorRadio.textContent = ''
+        const radioInputError1 = document.querySelector('.radioError1')
+    
+        if(facultyGroupInput.value.trim() === ''){
+            facultyGroupInput.style.border = '2px solid #ff3860'
+            radioInputError1.textContent = 'work experience, time is required'
+        }else {
+            facultyGroupInput.style.border = '2px solid #09c372'
+            radioInputError1.textContent = ''
+            validationCount++
+        }
+    }
+
+    if(teacherRadio.checked || studentRadio.checked){
+        errorRadio.textContent = ''
+    }
+
+    validatePassword()
+}
+
+function validateField(inputElement, errorMessage) {
+    if (inputElement.value.trim() === '') {
+        setError(inputElement, errorMessage)
+    } else {
+        setSuccess(inputElement)
+        validationCount++
+    }
+}
+
+function validatePassword() {
+    const password = passwordInput.value.trim()
+
+    if (password === '') {
+        setError(passwordInput, 'Password is required')
+    } else if (teacherRadio.checked && !isValidPasswordForTeacher(password)) {
+        setError(passwordInput, 'Password must contain only numbers')
+    } else if (studentRadio.checked && !isValidPasswordForStudent(password)) {
+        setError(passwordInput, 'Password must contain only numbers')
+    } else {
+        setSuccess(passwordInput)
+        validationCount++
+    }
+}

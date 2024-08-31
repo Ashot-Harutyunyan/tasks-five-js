@@ -25,22 +25,72 @@
     
     <!-- -------------------------------- -->
 
-    <form action="">
+    <form action="" class="form">
         <span class="remove">write your name</span>
-        <input type="name" data-n="0" placeholder="write your name">
+        <input type="name" data-n="0" class="input" placeholder="write your name">
         <span class="remove">write your surname</span>
-        <input type="surname" data-n="1" placeholder="write your surname">
+        <input type="surname" data-n="1" class="input" placeholder="write your surname">
         <span class="remove">write your email address</span>
-        <input type="email" data-n="2" placeholder="write your email address">
+        <input type="email" data-n="2" class="input" placeholder="write your email address">
         <span class="remove">write your input data</span>
-        <input type="login" data-n="3" placeholder="write your input data">
+        <input type="login" data-n="3" class="input" placeholder="write your input data">
         <span class="remove" >write your password</span>
-        <input type="password" data-n="4" placeholder="write your password">
+        <input type="password" data-n="4" class="input" placeholder="write your password">
     </form>
 
     <!-- -------------------------------- -->
-     
+    
     <h1 class="digital-clock"></h1>
+    
+    <!-- -------------------------------- -->
+
+    <form id="form" action="/">
+        <div class="input-control">
+            <label for="name">name</label>
+            <input id="name" name="name" type="text">
+            <div class="error"></div>
+        </div>
+
+        <div class="input-control">
+            <label for="surname">surname</label>
+            <input id="surname" name="surname" type="text">
+            <div class="error"></div>
+        </div>
+
+        <div class="input-control">
+            <label for="Date-of-Birth">Date of Birth</label>
+            <input id="Date-of-Birth" name="date" type="date"/>
+            <div class="error"></div>
+        </div>
+
+        <div class="input-control-radio">
+            <label for="Teacher">Teacher
+             <input type="radio" name="prof" id="Teacher">  
+             <div class="Work-experience-time">
+                <input type="text" name="WorkExperienceTime" id="WorkExperienceTime" placeholder="Work experience time">
+                <div class="radioError"></div>
+             </div> 
+            </label>
+            
+            <label for="Student">Student
+               <input type="radio" name="prof" id="Student"> 
+               <div class="Faculty-Group">
+                <input type="text" name="FacultyGroup" id="FacultyGroup" placeholder="Faculty Group">
+                <div class="radioError1"></div>
+             </div> 
+            </label>
+             
+            <div class="error"></div>   
+        </div>
+
+        <div class="input-control">
+            <label for="password" class="password">password</label>
+            <input id="password" name="password" type="password">
+            <div class="error"></div>
+        </div>
+        <button type="submit">Sign Up</button>
+    </form>  
+
 
     <script src="js/script.js"></script>
 </body>
